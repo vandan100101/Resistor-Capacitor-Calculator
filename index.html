@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMT Resistor and Capacitor Min/Max Calculator</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa; /* Light gray background */
+            padding: 20px;
+        }
+        .header {
+            background-color: #dc3545; /* Red header */
+            color: white; /* White text */
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .section {
+            background-color: white; /* White background for form sections */
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+        }
+        .result {
+            margin-top: 20px;
+            font-weight: bold;
+            padding: 10px;
+            background-color: #f8f9fa; /* Light gray background for results */
+            border-radius: 5px;
+        }
+        .btn-primary {
+            background-color: #dc3545; /* Red button */
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #c82333; /* Darker red on hover */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>SW QA SMT Resistor and Capacitor Min/Max Calculator</h1>
+        </div>
+
+        <!-- Resistor Section -->
+        <div class="section">
+            <h2>Resistor</h2>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label for="resistorValue" class="form-label">Value:</label>
+                    <input type="text" class="form-control" id="resistorValue" placeholder="e.g., 10">
+                </div>
+                <div class="col-md-4">
+                    <label for="resistorType" class="form-label">Type:</label>
+                    <select class="form-select" id="resistorType">
+                        <option value="Ω">Ω</option>
+                        <option value="KΩ">KΩ</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="resistorTolerance" class="form-label">Tolerance Code:</label>
+                    <select class="form-select" id="resistorTolerance">
+                        <option value="A">A (±0.05%)</option>
+                        <option value="B">B (±0.1%)</option>
+                        <option value="C">C (±0.25%)</option>
+                        <option value="D">D (±0.5%)</option>
+                        <option value="E">E (±0.5%)</option>
+                        <option value="F">F (±1%)</option>
+                        <option value="G">G (±2%)</option>
+                        <option value="H">H (±3%)</option>
+                        <option value="J">J (±5%)</option>
+                        <option value="K">K (±10%)</option>
+                        <option value="L">L (±15%)</option>
+                        <option value="M">M (±20%)</option>
+                        <option value="N">N (±30%)</option>
+                        <option value="P">P (-0 to 100%)</option>
+                        <option value="S">S (-20 to 50%)</option>
+                        <option value="W">W (-0 to 200%)</option>
+                        <option value="X">X (-20 to 40%)</option>
+                        <option value="Z">Z (-20 to 80%)</option>
+                    </select>
+                </div>
+            </div>
+            <button class="btn btn-primary mt-3" onclick="calculateResistor()">Calculate Resistor Min/Max</button>
+            <div class="result mt-3">
+                <p>Min Value: <span id="resistorMinValue"></span></p>
+                <p>Max Value: <span id="resistorMaxValue"></span></p>
+            </div>
+        </div>
+
+        <!-- Capacitor Section -->
+        <div class="section">
+            <h2>Capacitor</h2>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label for="capacitorCode" class="form-label">Code:</label>
+                    <input type="text" class="form-control" id="capacitorCode" placeholder="e.g., 472">
+                </div>
+                <div class="col-md-4">
+                    <label for="capacitorType" class="form-label">Type:</label>
+                    <select class="form-select" id="capacitorType">
+                        <option value="pF">pF</option>
+                        <option value="nF">nF</option>
+                        <option value="µF">µF</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="capacitorTolerance" class="form-label">Tolerance Code:</label>
+                    <select class="form-select" id="capacitorTolerance">
+                        <option value="A">A (±0.05%)</option>
+                        <option value="B">B (±0.1%)</option>
+                        <option value="C">C (±0.25%)</option>
+                        <option value="D">D (±0.5%)</option>
+                        <option value="E">E (±0.5%)</option>
+                        <option value="F">F (±1%)</option>
+                        <option value="G">G (±2%)</option>
+                        <option value="H">H (±3%)</option>
+                        <option value="J">J (±5%)</option>
+                        <option value="K">K (±10%)</option>
+                        <option value="L">L (±15%)</option>
+                        <option value="M">M (±20%)</option>
+                        <option value="N">N (±30%)</option>
+                        <option value="P">P (-0 to 100%)</option>
+                        <option value="S">S (-20 to 50%)</option>
+                        <option value="W">W (-0 to 200%)</option>
+                        <option value="X">X (-20 to 40%)</option>
+                        <option value="Z">Z (-20 to 80%)</option>
+                    </select>
+                </div>
+            </div>
+            <button class="btn btn-primary mt-3" onclick="calculateCapacitor()">Calculate Capacitor Min/Max</button>
+            <div class="result mt-3">
+                <p>Min Value: <span id="capacitorMinValue"></span></p>
+                <p>Max Value: <span id="capacitorMaxValue"></span></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const toleranceTable = {
+            'A': 0.0005, 'B': 0.001, 'C': 0.0025, 'D': 0.005, 'E': 0.005,
+            'F': 0.01, 'G': 0.02, 'H': 0.03, 'J': 0.05, 'K': 0.10,
+            'L': 0.15, 'M': 0.20, 'N': 0.30, 'P': 1.00, 'S': 0.50,
+            'W': 2.00, 'X': 0.40, 'Z': 0.80
+        };
+
+        // Function to parse resistor value
+        function parseResistorValue(value, type) {
+            const num = parseFloat(value);
+            if (type === 'KΩ') return num * 1000;
+            if (type === 'Ω') return num;
+            return NaN; // Invalid type
+        }
+
+        // Function to parse capacitor code (e.g., 472 = 47 * 10^2 pF = 4700 pF)
+        function parseCapacitorCode(code) {
+            if (!code || code.length !== 3 || isNaN(code)) {
+                return NaN; // Invalid code
+            }
+            const firstTwoDigits = parseFloat(code.substring(0, 2));
+            const multiplier = Math.pow(10, parseFloat(code.charAt(2)));
+            return firstTwoDigits * multiplier; // Value in pF
+        }
+
+        // Function to convert capacitor value to the selected type
+        function convertCapacitorValue(value, type) {
+            if (type === 'pF') return value;
+            if (type === 'nF') return value / 1000;
+            if (type === 'µF') return value / 1000000;
+            return NaN; // Invalid type
+        }
+
+        // Resistor calculation
+        function calculateResistor() {
+        const value = document.getElementById('resistorValue').value;
+        const type = document.getElementById('resistorType').value;
+        const toleranceCode = document.getElementById('resistorTolerance').value;
+
+        const baseValue = parseResistorValue(value, type);
+        if (isNaN(baseValue)) {
+            alert("Please enter a valid resistor value and type.");
+            return;
+        }
+
+        const tolerance = toleranceTable[toleranceCode];
+        if (tolerance === undefined) {
+            alert("Invalid tolerance code.");
+            return;
+        }
+
+        const min = baseValue * (1 - tolerance);
+        const max = baseValue * (1 + tolerance);
+
+        // Format the output based on the resistor type
+        let minFormatted, maxFormatted;
+        if (type === 'KΩ') {
+            minFormatted = `${(min / 1000).toFixed(2)} KΩ`;
+            maxFormatted = `${(max / 1000).toFixed(2)} KΩ`;
+        } else if (type === 'Ω') {
+            minFormatted = `${min.toFixed(2)} Ω`;
+            maxFormatted = `${max.toFixed(2)} Ω`;
+        } else {
+            minFormatted = `${min.toFixed(2)}`;
+            maxFormatted = `${max.toFixed(2)}`;
+        }
+
+        document.getElementById('resistorMinValue').textContent = minFormatted;
+        document.getElementById('resistorMaxValue').textContent = maxFormatted;
+    }
+
+        // Capacitor calculation
+        function calculateCapacitor() {
+            const code = document.getElementById('capacitorCode').value;
+            const type = document.getElementById('capacitorType').value;
+            const toleranceCode = document.getElementById('capacitorTolerance').value;
+
+            const baseValueInPF = parseCapacitorCode(code);
+            if (isNaN(baseValueInPF)) {
+                alert("Please enter a valid 3-digit capacitor code.");
+                return;
+            }
+
+            const baseValue = convertCapacitorValue(baseValueInPF, type);
+            if (isNaN(baseValue)) {
+                alert("Invalid capacitor type.");
+                return;
+            }
+
+            const tolerance = toleranceTable[toleranceCode];
+            if (tolerance === undefined) {
+                alert("Invalid tolerance code.");
+                return;
+            }
+
+            const min = baseValue * (1 - tolerance);
+            const max = baseValue * (1 + tolerance);
+
+            document.getElementById('capacitorMinValue').textContent = `${min.toFixed(2)} ${type}`;
+            document.getElementById('capacitorMaxValue').textContent = `${max.toFixed(2)} ${type}`;
+        }
+    </script>
+</body>
+</html>

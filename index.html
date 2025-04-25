@@ -222,37 +222,37 @@
     }
 
     function calculateCapacitor() {
-        const code = document.getElementById('capacitorCode').value.trim();
-        const type = document.getElementById('capacitorType').value;
-        const toleranceCode = document.getElementById('capacitorTolerance').value;
+    const input = document.getElementById('capacitorCode').value.trim();
+    const type = document.getElementById('capacitorType').value;
+    const toleranceCode = document.getElementById('capacitorTolerance').value;
 
-        let baseValueInPF;
-        if (!isNaN(code)) {
-            baseValueInPF = convertInputToPF(parseFloat(code), type);
-        } else {
-            baseValueInPF = parseCapacitorCodeOrValue(code);
-        }
+    let baseValueInPF;
 
-        if (isNaN(baseValueInPF)) {
-            alert("Please enter a valid capacitor code or numeric value.");
-            return;
-        }
-
-        const tolerance = toleranceTable[toleranceCode];
-        if (tolerance === undefined) {
-            alert("Invalid tolerance code.");
-            return;
-        }
-
-        const min = baseValueInPF * (1 - tolerance);
-        const max = baseValueInPF * (1 + tolerance);
-
-        const minConverted = convertCapacitorValueSmart(min);
-        const maxConverted = convertCapacitorValueSmart(max);
-
-        document.getElementById('capacitorMinValue').textContent = `${minConverted.value.toFixed(2)} ${minConverted.unit}`;
-        document.getElementById('capacitorMaxValue').textContent = `${maxConverted.value.toFixed(2)} ${maxConverted.unit}`;
+    // If the input is a 3-digit code (all numbers and length 3), treat it as a code
+    if (/^\d{3}$/.test(input)) {
+        baseValueInPF = parseCapacitorCodeOrValue(input); // parse 3-digit code
+    } else if (!isNaN(parseFloat(input))) {
+        baseValueInPF = convertInputToPF(parseFloat(input), type); // numeric input
+    } else {
+        alert("Please enter a valid 3-digit code or numeric capacitor value.");
+        return;
     }
+
+    const tolerance = toleranceTable[toleranceCode];
+    if (tolerance === undefined) {
+        alert("Invalid tolerance code.");
+        return;
+    }
+
+    const min = baseValueInPF * (1 - tolerance);
+    const max = baseValueInPF * (1 + tolerance);
+
+    const minConverted = convertCapacitorValueSmart(min);
+    const maxConverted = convertCapacitorValueSmart(max);
+
+    document.getElementById('capacitorMinValue').textContent = `${minConverted.value.toFixed(2)} ${minConverted.unit}`;
+    document.getElementById('capacitorMaxValue').textContent = `${maxConverted.value.toFixed(2)} ${maxConverted.unit}`;
+}
     </script>
 </body>
 </html>

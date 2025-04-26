@@ -156,47 +156,30 @@
         'W': 2.00, 'X': 0.40, 'Z': 0.80
     };
 
-    // Function to parse resistor value
     function parseResistorValue(value, type) {
         const num = parseFloat(value);
         if (type === 'MΩ') return num * 1000000;
         if (type === 'KΩ') return num * 1000;
         if (type === 'Ω') return num;
-        return NaN; // Invalid type
+        return NaN;
     }
 
-    // Function to parse capacitor code (if 3 digits) or direct value
     function parseCapacitorInput(input, type) {
         input = input.trim();
         if (/^\d{3}$/.test(input)) {
-            // It's a 3-digit code
             const firstTwoDigits = parseFloat(input.substring(0, 2));
             const multiplier = Math.pow(10, parseFloat(input.charAt(2)));
-            return firstTwoDigits * multiplier; // Value in pF
+            let pfValue = firstTwoDigits * multiplier;
+            if (type === 'pF') return pfValue;
+            if (type === 'nF') return pfValue / 1000;
+            if (type === 'µF') return pfValue / 1000000;
         } else if (!isNaN(parseFloat(input))) {
-            // It's a direct value
             const num = parseFloat(input);
-            if (type === 'pF') return num;
-            if (type === 'nF') return num * 1000;
-            if (type === 'µF') return num * 1000000;
-            return NaN;
-        } else {
-            return NaN;
+            return num;
         }
+        return NaN;
     }
 
-    // Function to format capacitor output nicely
-    function formatCapacitorValue(valueInPF) {
-        if (valueInPF >= 1000000) {
-            return { value: valueInPF / 1000000, unit: 'µF' };
-        } else if (valueInPF >= 1000) {
-            return { value: valueInPF / 1000, unit: 'nF' };
-        } else {
-            return { value: valueInPF, unit: 'pF' };
-        }
-    }
-
-    // Resistor calculation
     function calculateResistor() {
         const value = document.getElementById('resistorValue').value;
         const type = document.getElementById('resistorType').value;
@@ -236,14 +219,13 @@
         document.getElementById('resistorMaxValue').textContent = maxFormatted;
     }
 
-    // Capacitor calculation
     function calculateCapacitor() {
         const input = document.getElementById('capacitorCode').value;
         const type = document.getElementById('capacitorType').value;
         const toleranceCode = document.getElementById('capacitorTolerance').value;
 
-        const baseValueInPF = parseCapacitorInput(input, type);
-        if (isNaN(baseValueInPF)) {
+        const baseValue = parseCapacitorInput(input, type);
+        if (isNaN(baseValue)) {
             alert("Please enter a valid capacitor code or value.");
             return;
         }
@@ -254,15 +236,13 @@
             return;
         }
 
-        const min = baseValueInPF * (1 - tolerance);
-        const max = baseValueInPF * (1 + tolerance);
+        const min = baseValue * (1 - tolerance);
+        const max = baseValue * (1 + tolerance);
 
-        const minFormatted = formatCapacitorValue(min);
-        const maxFormatted = formatCapacitorValue(max);
-
-        document.getElementById('capacitorMinValue').textContent = `${minFormatted.value.toFixed(2)} ${minFormatted.unit}`;
-        document.getElementById('capacitorMaxValue').textContent = `${maxFormatted.value.toFixed(2)} ${maxFormatted.unit}`;
+        document.getElementById('capacitorMinValue').textContent = `${min.toFixed(2)} ${type}`;
+        document.getElementById('capacitorMaxValue').textContent = `${max.toFixed(2)} ${type}`;
     }
 </script>
+
 </body>
 </html>

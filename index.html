@@ -159,8 +159,8 @@
                 <div class="col-md-4">
                     <label for="resistorType" class="form-label">Type:</label>
                     <select class="form-select" id="resistorType">
-                        <option value="mΩ">mΩ</option>
                         <option value="Ω">Ω</option>
+                        <option value="mΩ">mΩ</option>
                         <option value="KΩ">KΩ</option>
                         <option value="MΩ">MΩ</option>
                     </select>
@@ -283,8 +283,8 @@
         // --- Resistor Value Parse ---
         function parseResistorValue(value, type) {
             const num = parseFloat(value);
-            if (type === 'mΩ') return num / 1000;
             if (type === 'Ω') return num;
+            if (type === 'mΩ') return num / 1000;
             if (type === 'KΩ') return num * 1000;
             if (type === 'MΩ') return num * 1000000;
             return NaN;

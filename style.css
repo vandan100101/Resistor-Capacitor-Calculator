@@ -1,0 +1,202 @@
+body {
+    background-color: #f8f9fa; /* Light gray background */
+    padding: 20px;
+}
+.header {
+    background-color: #dc3545; /* Red header */
+    color: white; /* White text */
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    text-align: center;
+}
+.section {
+    background-color: white; /* White background for form sections */
+    margin-bottom: 30px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+.result {
+    margin-top: 20px;
+    font-weight: bold;
+    padding: 10px;
+    background-color: #f8f9fa; /* Light gray background for results */
+    border-radius: 5px;
+}
+.btn-primary {
+    background-color: #dc3545; /* Red button */
+    border: none;
+}
+.btn-primary:hover {
+    background-color: #c82333; /* Darker red on hover */
+}
+/* Dark mode background */
+.dark-mode {
+  background-color: #121212; /* Surface a0 */
+  color: #c8cfd2; /* Primary a0 */
+}
+
+/* Inputs, selects, textareas */
+.dark-mode input,
+.dark-mode select,
+.dark-mode textarea {
+  background-color: #0e0d0d; /* Surface a10 */
+  color: #c8cfd2; /* Primary a0 */
+  border: 1px solid #3f3f3f; /* Surface a20 */
+  border-radius: 8px;
+  padding: 10px;
+  transition: all 0.3s ease;
+}
+
+/* Placeholder text */
+.dark-mode input::placeholder,
+.dark-mode textarea::placeholder {
+  color: #8b8b8b; /* Surface a50 */
+}
+
+/* Focus effect */
+.dark-mode input:focus,
+.dark-mode select:focus,
+.dark-mode textarea:focus {
+  border-color: #040404; /* Surface a30 */
+  box-shadow: 0 0 5px #fb1818;
+  background-color: #363737; /* Tonal a10 */
+  outline: none;
+  color: #ddd;
+}
+
+/* Buttons */
+.dark-mode button {
+  background-color: #282828; /* Custom Red you used */
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  transition: background-color 0.3s ease;
+}
+
+/* Button hover */
+.dark-mode button:hover {
+  background-color: #787474; 
+  color: black;
+}
+
+/* Dark Mode toggle button */
+#darkModeToggle {
+  background-color: #282828; /* Surface a10 */
+  color: #c8cfd2; /* Primary a0 */
+  border: 1px solid #3f3f3f; /* Surface a20 */
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+/* Toggle hover */
+#darkModeToggle:hover {
+  background-color: #363737; /* Tonal a10 */
+  border-color: #575757; /* Surface a30 */
+}
+
+/* Section container (Resistor and Capacitor) */
+.dark-mode .section-container {
+  background-color: #181818; /* Primary a30 */
+  color: #f8f1f1; /* Dark text for contrast */
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3); /* Optional: nice soft shadow */
+}
+/* Results area (for Capacitor and Resistor values) */
+.dark-mode .result {
+    background-color: #181818; /* Same as section-container for consistency */
+    color: #f8f1f1;
+    border-radius: 8px;
+    padding: 10px;
+    margin-top: 10px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.2);
+}
+.dark-mode .header {
+    background-color: #181818; /* Same dark surface color */
+    color: #f8f1f1; /* Light text for contrast */
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  }
+
+/* Section container */
+.section-container {
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 12px;
+    margin-top: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Table */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th, .table td {
+    text-align: center;
+    padding: 12px;
+    border: 1px solid #ddd;
+    vertical-align: middle;
+}
+
+.table th {
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+}
+
+.table td input[type="text"] {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-sizing: border-box;
+}
+
+/* Button */
+.btn {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+
+/* Responsive Table */
+.table-responsive {
+    overflow-x: auto;
+}
+
+/* Slider styling */
+.form-range {
+    width: 100%;
+    height: 8px;
+    cursor: pointer;
+}
+
+/* Dark mode slider */
+.dark-mode .form-range::-webkit-slider-thumb {
+    background: #dc3545;
+}
+.dark-mode .form-range::-moz-range-thumb {
+    background: #dc3545;
+}
+.dark-mode .form-range::-ms-thumb {
+    background: #dc3545;
+}

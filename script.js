@@ -35,7 +35,8 @@ function saveValues() {
         capacitorType: document.getElementById('capacitorType').value,
         capacitorTolerance: document.getElementById('capacitorTolerance').value,
         resistorPrecision: resistorPrecision,
-        capacitorPrecision: capacitorPrecision
+        capacitorPrecision: capacitorPrecision,
+        darkMode: document.body.classList.contains('dark-mode')
     };
     localStorage.setItem('calculatorData', JSON.stringify(data));
 }
@@ -60,6 +61,9 @@ function loadValues() {
             document.getElementById('capacitorPrecision').value = capacitorPrecision;
             document.getElementById('capacitorDecimalValue').textContent = capacitorPrecision;
         }
+        if (saved.darkMode) {
+            document.body.classList.add('dark-mode');
+        }
     }
 }
 
@@ -76,16 +80,16 @@ function parseResistorValue(value, type) {
 
 // --- Capacitor Code or Real Value Parse ---
 function parseCapacitorValue(codeOrValue) {
-// First try to parse as a plain number
-if (!isNaN(codeOrValue)) {
-   return parseFloat(codeOrValue);
-}
+    // First try to parse as a plain number
+    if (!isNaN(codeOrValue)) {
+        return parseFloat(codeOrValue);
+    }
     
-// Handle 3-digit code (standard capacitor code)
-if (codeOrValue.length === 3 && /^\d+$/.test(codeOrValue)) {
-   const firstTwoDigits = parseInt(codeOrValue.substring(0, 2));
-   const multiplier = Math.pow(10, parseInt(codeOrValue.charAt(2)));
-   return firstTwoDigits * multiplier; // in pF
+    // Handle 3-digit code (standard capacitor code)
+    if (codeOrValue.length === 3 && /^\d+$/.test(codeOrValue)) {
+        const firstTwoDigits = parseInt(codeOrValue.substring(0, 2));
+        const multiplier = Math.pow(10, parseInt(codeOrValue.charAt(2)));
+        return firstTwoDigits * multiplier; // in pF
     }
     
     return NaN;
@@ -142,7 +146,6 @@ function calculateResistor() {
 
     saveValues();
 }
-
 
 // --- Capacitor Calculation ---
 function calculateCapacitor() {
@@ -251,15 +254,16 @@ function updateRow(row) {
     const min = valueInPF * (1 - tolerance);
     const max = valueInPF * (1 + tolerance);
 
+    // Determine best unit for display
     let displayUnit = 'pF';
     let minVal = min;
     let maxVal = max;
 
-    if (valueInPF > 1000000) {
+    if (valueInPF >= 1000000) {
         displayUnit = 'µF';
         minVal = min / 1000000;
         maxVal = max / 1000000;
-    } else if (valueInPF > 1000) {
+    } else if (valueInPF >= 1000) {
         displayUnit = 'nF';
         minVal = min / 1000;
         maxVal = max / 1000;

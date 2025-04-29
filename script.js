@@ -76,14 +76,18 @@ function parseResistorValue(value, type) {
 
 // --- Capacitor Code or Real Value Parse ---
 function parseCapacitorValue(codeOrValue) {
-    if (!isNaN(codeOrValue)) {
-        return parseFloat(codeOrValue);
+// First try to parse as a plain number
+if (!isNaN(codeOrValue)) {
+   return parseFloat(codeOrValue);
+}
+    
+// Handle 3-digit code (standard capacitor code)
+if (codeOrValue.length === 3 && /^\d+$/.test(codeOrValue)) {
+   const firstTwoDigits = parseInt(codeOrValue.substring(0, 2));
+   const multiplier = Math.pow(10, parseInt(codeOrValue.charAt(2)));
+   return firstTwoDigits * multiplier; // in pF
     }
-    if (codeOrValue.length === 3) {
-        const firstTwoDigits = parseInt(codeOrValue.substring(0, 2));
-        const multiplier = Math.pow(10, parseInt(codeOrValue.charAt(2)));
-        return firstTwoDigits * multiplier; // in pF
-    }
+    
     return NaN;
 }
 
@@ -139,6 +143,7 @@ function calculateResistor() {
     saveValues();
 }
 
+
 // --- Capacitor Calculation ---
 function calculateCapacitor() {
     const code = document.getElementById('capacitorCode').value;
@@ -169,15 +174,34 @@ function calculateCapacitor() {
     const min = baseValue * (1 - tolerance);
     const max = baseValue * (1 + tolerance);
 
-    let unit = type;
-    if (baseValue > 1000000 && type === 'pF') {
-        unit = 'µF';
-    } else if (baseValue > 1000 && type === 'pF') {
-        unit = 'nF';
+    // Determine the best unit to display
+    let displayValue = baseValue;
+    let displayMin = min;
+    let displayMax = max;
+    let displayUnit = type;
+
+    // Auto-select appropriate unit if not specified
+    if (type === 'pF') {
+        if (baseValue >= 1000000) {
+            displayValue = baseValue / 1000000;
+            displayMin = min / 1000000;
+            displayMax = max / 1000000;
+            displayUnit = 'µF';
+        } else if (baseValue >= 1000) {
+            displayValue = baseValue / 1000;
+            displayMin = min / 1000;
+            displayMax = max / 1000;
+            displayUnit = 'nF';
+        }
+    } else if (type === 'nF' && baseValue >= 1000) {
+        displayValue = baseValue / 1000;
+        displayMin = min / 1000;
+        displayMax = max / 1000;
+        displayUnit = 'µF';
     }
 
-    document.getElementById('capacitorMinValue').innerHTML = `Min Value: ${min.toFixed(capacitorPrecision)} ${unit}<br>`;
-    document.getElementById('capacitorMaxValue').innerHTML = `Max Value: ${max.toFixed(capacitorPrecision)} ${unit}`;
+    document.getElementById('capacitorMinValue').innerHTML = `Min Value: ${displayMin.toFixed(capacitorPrecision)} ${displayUnit}<br>`;
+    document.getElementById('capacitorMaxValue').innerHTML = `Max Value: ${displayMax.toFixed(capacitorPrecision)} ${displayUnit}`;
 
     saveValues();
 }

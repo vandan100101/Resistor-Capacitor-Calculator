@@ -1,4 +1,4 @@
-// Global variables
+// Global Variables
 const toleranceTable = {
     'A': 0.0005, 'B': 0.001, 'C': 0.0025, 'D': 0.005, 'E': 0.005,
     'F': 0.01, 'G': 0.02, 'H': 0.03, 'J': 0.05, 'K': 0.10,
@@ -9,23 +9,22 @@ const toleranceTable = {
 let resistorPrecision = 2;
 let capacitorPrecision = 2;
 
-// --- Resistor Decimal Precision Control ---
-document.getElementById('resistorPrecision').addEventListener('input', function() {
+// --- Precision Controls ---
+document.getElementById('resistorPrecision').addEventListener('input', function () {
     resistorPrecision = parseInt(this.value);
     document.getElementById('resistorDecimalValue').textContent = resistorPrecision;
     calculateResistor();
     updateAllTableRows();
 });
 
-// --- Capacitor Decimal Precision Control ---
-document.getElementById('capacitorPrecision').addEventListener('input', function() {
+document.getElementById('capacitorPrecision').addEventListener('input', function () {
     capacitorPrecision = parseInt(this.value);
     document.getElementById('capacitorDecimalValue').textContent = capacitorPrecision;
     calculateCapacitor();
     updateAllTableRows();
 });
 
-// --- Auto Save / Load values from localStorage ---
+// --- Save & Load ---
 function saveValues() {
     const data = {
         resistorValue: document.getElementById('resistorValue').value,
@@ -34,8 +33,8 @@ function saveValues() {
         capacitorCode: document.getElementById('capacitorCode').value,
         capacitorType: document.getElementById('capacitorType').value,
         capacitorTolerance: document.getElementById('capacitorTolerance').value,
-        resistorPrecision: resistorPrecision,
-        capacitorPrecision: capacitorPrecision,
+        resistorPrecision,
+        capacitorPrecision,
         darkMode: document.body.classList.contains('dark-mode')
     };
     localStorage.setItem('calculatorData', JSON.stringify(data));
@@ -50,7 +49,6 @@ function loadValues() {
         document.getElementById('capacitorCode').value = saved.capacitorCode || '';
         document.getElementById('capacitorType').value = saved.capacitorType || 'pF';
         document.getElementById('capacitorTolerance').value = saved.capacitorTolerance || 'F';
-
         if (saved.resistorPrecision !== undefined) {
             resistorPrecision = saved.resistorPrecision;
             document.getElementById('resistorPrecision').value = resistorPrecision;
@@ -67,57 +65,48 @@ function loadValues() {
     }
 }
 
-// --- Resistor Value Parse ---
+// --- Unit Parsers ---
 function parseResistorValue(value, type) {
     const num = parseFloat(value);
     if (isNaN(num)) return NaN;
-    if (type === 'Ω') return num;
-    if (type === 'mΩ') return num / 1000;
-    if (type === 'KΩ') return num * 1000;
-    if (type === 'MΩ') return num * 1000000;
-    return NaN;
+    switch (type) {
+        case 'Ω': return num;
+        case 'mΩ': return num / 1000;
+        case 'KΩ': return num * 1000;
+        case 'MΩ': return num * 1e6;
+        default: return NaN;
+    }
 }
 
-// --- Capacitor Code or Real Value Parse ---
 function parseCapacitorValue(codeOrValue) {
-    // First try to parse as a plain number
-    if (!isNaN(codeOrValue)) {
-        return parseFloat(codeOrValue);
+    const str = codeOrValue.toString().trim();
+    if (/^\d{3}$/.test(str)) {
+        const firstTwo = parseInt(str.substring(0, 2));
+        const multiplier = Math.pow(10, parseInt(str.charAt(2)));
+        return firstTwo * multiplier; // in pF
     }
-    
-    // Handle 3-digit code (standard capacitor code)
-    if (codeOrValue.length === 3 && /^\d+$/.test(codeOrValue)) {
-        const firstTwoDigits = parseInt(codeOrValue.substring(0, 2));
-        const multiplier = Math.pow(10, parseInt(codeOrValue.charAt(2)));
-        return firstTwoDigits * multiplier; // in pF
-    }
-    
-    return NaN;
+    const num = parseFloat(str);
+    return isNaN(num) ? NaN : num;
 }
 
-// --- Capacitor Value Conversion ---
 function convertCapacitorValue(valuePF, targetType) {
-    if (targetType === 'pF') return valuePF;
-    if (targetType === 'nF') return valuePF / 1000;
-    if (targetType === 'µF') return valuePF / 1000000;
-    return NaN;
+    switch (targetType) {
+        case 'pF': return valuePF;
+        case 'nF': return valuePF / 1e3;
+        case 'µF': return valuePF / 1e6;
+        default: return NaN;
+    }
 }
 
-// --- Resistor Calculation ---
+// --- Resistor Logic ---
 function calculateResistor() {
     const value = document.getElementById('resistorValue').value;
     const type = document.getElementById('resistorType').value;
     const toleranceCode = document.getElementById('resistorTolerance').value;
-
     const baseValue = parseResistorValue(value, type);
-    if (isNaN(baseValue)) {
-        document.getElementById('resistorMinValue').textContent = '';
-        document.getElementById('resistorMaxValue').textContent = '';
-        return;
-    }
-
     const tolerance = toleranceTable[toleranceCode];
-    if (tolerance === undefined) {
+
+    if (isNaN(baseValue) || tolerance === undefined) {
         document.getElementById('resistorMinValue').textContent = '';
         document.getElementById('resistorMaxValue').textContent = '';
         return;
@@ -125,50 +114,34 @@ function calculateResistor() {
 
     const min = baseValue * (1 - tolerance);
     const max = baseValue * (1 + tolerance);
-
-    let displayMin = min, displayMax = max, displayUnit = "Ω";
+    let displayMin = min, displayMax = max, unit = 'Ω';
 
     if (min >= 1e6) {
-        displayMin = (min / 1e6).toFixed(resistorPrecision);
-        displayMax = (max / 1e6).toFixed(resistorPrecision);
-        displayUnit = "MΩ";
+        displayMin = min / 1e6;
+        displayMax = max / 1e6;
+        unit = 'MΩ';
     } else if (min >= 1e3) {
-        displayMin = (min / 1e3).toFixed(resistorPrecision);
-        displayMax = (max / 1e3).toFixed(resistorPrecision);
-        displayUnit = "KΩ";
-    } else {
-        displayMin = min.toFixed(resistorPrecision);
-        displayMax = max.toFixed(resistorPrecision);
+        displayMin = min / 1e3;
+        displayMax = max / 1e3;
+        unit = 'KΩ';
     }
 
-    document.getElementById('resistorMinValue').textContent = `${displayMin} ${displayUnit}`;
-    document.getElementById('resistorMaxValue').textContent = `${displayMax} ${displayUnit}`;
-
+    document.getElementById('resistorMinValue').textContent = `${displayMin.toFixed(resistorPrecision)} ${unit}`;
+    document.getElementById('resistorMaxValue').textContent = `${displayMax.toFixed(resistorPrecision)} ${unit}`;
     saveValues();
 }
 
-// --- Capacitor Calculation ---
+// --- Capacitor Logic (Fixed Unit Only) ---
 function calculateCapacitor() {
     const code = document.getElementById('capacitorCode').value;
     const type = document.getElementById('capacitorType').value;
     const toleranceCode = document.getElementById('capacitorTolerance').value;
 
     const baseValueInPF = parseCapacitorValue(code);
-    if (isNaN(baseValueInPF)) {
-        document.getElementById('capacitorMinValue').innerHTML = '';
-        document.getElementById('capacitorMaxValue').innerHTML = '';
-        return;
-    }
-
     const baseValue = convertCapacitorValue(baseValueInPF, type);
-    if (isNaN(baseValue)) {
-        document.getElementById('capacitorMinValue').innerHTML = '';
-        document.getElementById('capacitorMaxValue').innerHTML = '';
-        return;
-    }
-
     const tolerance = toleranceTable[toleranceCode];
-    if (tolerance === undefined) {
+
+    if (isNaN(baseValue) || tolerance === undefined) {
         document.getElementById('capacitorMinValue').innerHTML = '';
         document.getElementById('capacitorMaxValue').innerHTML = '';
         return;
@@ -177,71 +150,37 @@ function calculateCapacitor() {
     const min = baseValue * (1 - tolerance);
     const max = baseValue * (1 + tolerance);
 
-    // Determine the best unit to display
-    let displayValue = baseValue;
-    let displayMin = min;
-    let displayMax = max;
-    let displayUnit = type;
-
-    // Auto-select appropriate unit if not specified
-    if (type === 'pF') {
-        if (baseValue >= 1000000) {
-            displayValue = baseValue / 1000000;
-            displayMin = min / 1000000;
-            displayMax = max / 1000000;
-            displayUnit = 'µF';
-        } else if (baseValue >= 1000) {
-            displayValue = baseValue / 1000;
-            displayMin = min / 1000;
-            displayMax = max / 1000;
-            displayUnit = 'nF';
-        }
-    } else if (type === 'nF' && baseValue >= 1000) {
-        displayValue = baseValue / 1000;
-        displayMin = min / 1000;
-        displayMax = max / 1000;
-        displayUnit = 'µF';
-    }
-
-    document.getElementById('capacitorMinValue').innerHTML = `Min Value: ${displayMin.toFixed(capacitorPrecision)} ${displayUnit}<br>`;
-    document.getElementById('capacitorMaxValue').innerHTML = `Max Value: ${displayMax.toFixed(capacitorPrecision)} ${displayUnit}`;
-
+    document.getElementById('capacitorMinValue').innerHTML = `Min Value: ${min.toFixed(capacitorPrecision)} ${type}<br>`;
+    document.getElementById('capacitorMaxValue').innerHTML = `Max Value: ${max.toFixed(capacitorPrecision)} ${type}`;
     saveValues();
 }
 
-// --- Table Functions ---
+// --- Table Handling ---
 function addRow() {
-    const table = document.getElementById('partsTable').getElementsByTagName('tbody')[0];
-    const newRow = table.insertRow();
+    const table = document.querySelector('#partsTable tbody');
+    const row = table.insertRow();
 
-    const partNumberCell = newRow.insertCell(0);
+    const partCell = row.insertCell(0);
     const partInput = document.createElement('input');
     partInput.type = 'text';
     partInput.className = 'form-control';
     partInput.placeholder = 'Enter Part Number';
-    partInput.oninput = function() { updateRow(newRow); };
-    partNumberCell.appendChild(partInput);
+    partInput.addEventListener('input', () => updateRow(row));
+    partCell.appendChild(partInput);
 
-    const minCell = newRow.insertCell(1);
+    const minCell = row.insertCell(1);
     minCell.className = 'min-value';
     minCell.textContent = '-';
 
-    const maxCell = newRow.insertCell(2);
+    const maxCell = row.insertCell(2);
     maxCell.className = 'max-value';
     maxCell.textContent = '-';
 }
 
 function updateRow(row) {
-    const partInput = row.querySelector('input');
+    const code = row.querySelector('input').value.trim();
     const minCell = row.querySelector('.min-value');
     const maxCell = row.querySelector('.max-value');
-
-    const code = partInput.value.trim();
-    if (code.length === 0) {
-        minCell.textContent = '-';
-        maxCell.textContent = '-';
-        return;
-    }
 
     const valueInPF = parseCapacitorValue(code);
     if (isNaN(valueInPF)) {
@@ -250,47 +189,31 @@ function updateRow(row) {
         return;
     }
 
-    const tolerance = toleranceTable['F']; // Default ±1% (F)
+    const tolerance = toleranceTable['F']; // Default to ±1%
     const min = valueInPF * (1 - tolerance);
     const max = valueInPF * (1 + tolerance);
 
-    // Determine best unit for display
-    let displayUnit = 'pF';
-    let minVal = min;
-    let maxVal = max;
-
-    if (valueInPF >= 1000000) {
-        displayUnit = 'µF';
-        minVal = min / 1000000;
-        maxVal = max / 1000000;
-    } else if (valueInPF >= 1000) {
-        displayUnit = 'nF';
-        minVal = min / 1000;
-        maxVal = max / 1000;
-    }
-
-    minCell.textContent = `${minVal.toFixed(capacitorPrecision)} ${displayUnit}`;
-    maxCell.textContent = `${maxVal.toFixed(capacitorPrecision)} ${displayUnit}`;
+    // Display fixed unit (pF only in table)
+    minCell.textContent = `${min.toFixed(capacitorPrecision)} pF`;
+    maxCell.textContent = `${max.toFixed(capacitorPrecision)} pF`;
 }
 
 function updateAllTableRows() {
-    const rows = document.querySelectorAll('#partsTable tbody tr');
-    rows.forEach(row => updateRow(row));
+    document.querySelectorAll('#partsTable tbody tr').forEach(row => updateRow(row));
 }
 
-// --- Dark Mode Toggle ---
+// --- Dark Mode ---
 function toggleDarkMode() {
     document.body.classList.toggle('dark-mode');
     saveValues();
 }
 
-// --- On Page Load ---
-window.onload = function() {
+// --- On Load ---
+window.onload = function () {
     loadValues();
     calculateResistor();
     calculateCapacitor();
 
-    // Event listeners
     document.getElementById('resistorValue').addEventListener('input', calculateResistor);
     document.getElementById('resistorType').addEventListener('change', calculateResistor);
     document.getElementById('resistorTolerance').addEventListener('change', calculateResistor);
@@ -299,6 +222,5 @@ window.onload = function() {
     document.getElementById('capacitorType').addEventListener('change', calculateCapacitor);
     document.getElementById('capacitorTolerance').addEventListener('change', calculateCapacitor);
 
-    // Add initial row to table
     addRow();
 };

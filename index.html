@@ -1,160 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resistor and Capacitor Min/Max Calculator</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Min/Max Calculator</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container ">
-        <!-- Header -->
-        <div class="header ">
-            <h1>Resistor and Capacitor Min/Max Calculator</h1>
-        </div>
-        
-
-        <div style="text-align: right; padding: 10px;">
-            <button class="btn btn-dark" onclick="toggleDarkMode()">🌙 Dark Mode</button>
-          </div>
-
-
-        <!-- Decimal Precision Control -->
-        <div class="section section-container">
-            <h2>Decimal Precision</h2>
-            <div class="row g-3 align-items-center">
-            </div>
-        </div>
-
-        <!-- Resistor Section -->
-        <div class="section section-container">
-            <h2>Resistor</h2>
-            <div class="row g-3">
-                <div class="col-md-4">
-                    <label for="resistorValue" class="form-label">Value:</label>
-                    <input type="text" class="form-control" id="resistorValue" placeholder="e.g., 10">
-                </div>
-                <div class="col-md-4">
-                    <label for="resistorType" class="form-label">Type:</label>
-                    <select class="form-select" id="resistorType">
-                        <option value="Ω">Ω</option>
-                        <option value="mΩ">mΩ</option>
-                        <option value="KΩ">KΩ</option>
-                        <option value="MΩ">MΩ</option>
-                    </select>
-                </div>
-                <div class="col-md-4">
-                    <label for="resistorTolerance" class="form-label">Tolerance Code:</label>
-                    <select class="form-select" id="resistorTolerance">
-                        <option value="A">A (±0.05%)</option>
-                        <option value="B">B (±0.1%)</option>
-                        <option value="C">C (±0.25%)</option>
-                        <option value="D">D (±0.5%)</option>
-                        <option value="E">E (±0.5%)</option>
-                        <option value="F">F (±1%)</option>
-                        <option value="G">G (±2%)</option>
-                        <option value="H">H (±3%)</option>
-                        <option value="J">J (±5%)</option>
-                        <option value="K">K (±10%)</option>
-                        <option value="L">L (±15%)</option>
-                        <option value="M">M (±20%)</option>
-                        <option value="N">N (±30%)</option>
-                        <option value="P">P (-0 to 100%)</option>
-                        <option value="S">S (-20 to 50%)</option>
-                        <option value="W">W (-0 to 200%)</option>
-                        <option value="X">X (-20 to 40%)</option>
-                        <option value="Z">Z (-20 to 80%)</option>
-                    </select>
-                </div>
-            </div>
-            <div class="result mt-3">
-                <p>Min Value: <span id="resistorMinValue"></span></p>
-                <p>Max Value: <span id="resistorMaxValue"></span></p>
-            </div>
-            <div class="col-md-6">
-                <h4>Resistor Precision</h4>
-                <label for="resistorPrecision" class="form-label">Decimal Places: <span id="resistorDecimalValue">2</span></label>
-                <input type="range" class="form-range" min="0" max="6" value="2" id="resistorPrecision">
-            </div>
-        </div>
-
-        <!-- Capacitor Section -->
-        <div class="section section-container">
-            <h2>Capacitor</h2>
-            <div class="row g-3">
-                <div class="col-md-4">
-                    <label for="capacitorCode" class="form-label">Code:</label>
-                    <input type="text" class="form-control" id="capacitorCode" placeholder="e.g., 472">
-                </div>
-                <div class="col-md-4">
-                    <label for="capacitorType" class="form-label">Type:</label>
-                    <select class="form-select" id="capacitorType">
-                        <option value="pF">pF</option>
-                        <option value="nF">nF</option>
-                        <option value="µF">µF</option>
-                    </select>
-                </div>
-                <div class="col-md-4">
-                    <label for="capacitorTolerance" class="form-label">Tolerance Code:</label>
-                    <select class="form-select" id="capacitorTolerance">
-                        <option value="A">A (±0.05%)</option>
-                        <option value="B">B (±0.1%)</option>
-                        <option value="C">C (±0.25%)</option>
-                        <option value="D">D (±0.5%)</option>
-                        <option value="E">E (±0.5%)</option>
-                        <option value="F">F (±1%)</option>
-                        <option value="G">G (±2%)</option>
-                        <option value="H">H (±3%)</option>
-                        <option value="J">J (±5%)</option>
-                        <option value="K">K (±10%)</option>
-                        <option value="L">L (±15%)</option>
-                        <option value="M">M (±20%)</option>
-                        <option value="N">N (±30%)</option>
-                        <option value="P">P (-0 to 100%)</option>
-                        <option value="S">S (-20 to 50%)</option>
-                        <option value="W">W (-0 to 200%)</option>
-                        <option value="X">X (-20 to 40%)</option>
-                        <option value="Z">Z (-20 to 80%)</option>
-                    </select>
-                </div>
-            </div>
-            <div class="result mt-3">
-                <p> <span id="capacitorMinValue"></span></p>
-                <p> <span id="capacitorMaxValue"></span></p>
-            </div>
-            <div class="col-md-6">
-                <h4>Capacitor Precision</h4>
-                <label for="capacitorPrecision" class="form-label">Decimal Places: <span id="capacitorDecimalValue">2</span></label>
-                <input type="range" class="form-range" min="0" max="6" value="2" id="capacitorPrecision">
-            </div>
-        </div>
-
-        <!-- Right Section: Dynamic Table -->
-        <div class="section section-container">
-            <h2>Part Number Min/Max Table</h2>
-            <button class="btn btn-primary mb-3" onclick="addRow()">➕ Add Row</button>
-            <div class="table-responsive">
-                <table class="table table-bordered" id="partsTable">
-                    <thead>
-                        <tr>
-                            <th>Part Number</th>
-                            <th>Min</th>
-                            <th>Max</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Rows will be inserted here -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
+  <div class="container">
+    <div class="header">
+      <h1>Resistor & Capacitor Min/Max Calculator</h1>
+      <button class="btn btn-dark mt-3" onclick="toggleDarkMode()">🌙 Toggle Dark Mode</button>
     </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="script.js"></script>
+    <div class="section-container">
+      <h2>Resistor</h2>
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label for="resistorValue">Value</label>
+          <input type="text" class="form-control" id="resistorValue" placeholder="e.g., 10" />
+        </div>
+        <div class="col-md-4">
+          <label for="resistorType">Type</label>
+          <select class="form-select" id="resistorType">
+            <option value="Ω">Ω</option>
+            <option value="mΩ">mΩ</option>
+            <option value="KΩ">KΩ</option>
+            <option value="MΩ">MΩ</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label for="resistorTolerance">Tolerance Code</label>
+          <select class="form-select" id="resistorTolerance">
+                        <option value="A">A (±0.05%)</option>
+                        <option value="B">B (±0.1%)</option>
+                        <option value="C">C (±0.25%)</option>
+                        <option value="D">D (±0.5%)</option>
+                        <option value="E">E (±0.5%)</option>
+                        <option value="F">F (±1%)</option>
+                        <option value="G">G (±2%)</option>
+                        <option value="H">H (±3%)</option>
+                        <option value="J">J (±5%)</option>
+                        <option value="K">K (±10%)</option>
+                        <option value="L">L (±15%)</option>
+                        <option value="M">M (±20%)</option>
+                        <option value="N">N (±30%)</option>
+                        <option value="P">P (-0 to 100%)</option>
+                        <option value="S">S (-20 to 50%)</option>
+                        <option value="W">W (-0 to 200%)</option>
+                        <option value="X">X (-20 to 40%)</option>
+                        <option value="Z">Z (-20 to 80%)</option>
+          </select>
+        </div>
+      </div>
+      <div class="result">
+        <p>Min Value: <span id="resistorMinValue"></span></p>
+        <p>Max Value: <span id="resistorMaxValue"></span></p>
+      </div>
+      <label class="precision-label">Decimal Places: <span id="resistorDecimalValue">2</span></label>
+      <input type="range" class="form-range" min="0" max="6" value="2" id="resistorPrecision" />
+    </div>
+
+    <div class="section-container">
+      <h2>Capacitor</h2>
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label for="capacitorCode">Code</label>
+          <input type="text" class="form-control" id="capacitorCode" placeholder="e.g., 472" />
+        </div>
+        <div class="col-md-4">
+          <label for="capacitorType">Type</label>
+          <select class="form-select" id="capacitorType">
+            <option value="pF">pF</option>
+            <option value="nF">nF</option>
+            <option value="µF">µF</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label for="capacitorTolerance">Tolerance Code</label>
+          <select class="form-select" id="capacitorTolerance">
+                        <option value="A">A (±0.05%)</option>
+                        <option value="B">B (±0.1%)</option>
+                        <option value="C">C (±0.25%)</option>
+                        <option value="D">D (±0.5%)</option>
+                        <option value="E">E (±0.5%)</option>
+                        <option value="F">F (±1%)</option>
+                        <option value="G">G (±2%)</option>
+                        <option value="H">H (±3%)</option>
+                        <option value="J">J (±5%)</option>
+                        <option value="K">K (±10%)</option>
+                        <option value="L">L (±15%)</option>
+                        <option value="M">M (±20%)</option>
+                        <option value="N">N (±30%)</option>
+                        <option value="P">P (-0 to 100%)</option>
+                        <option value="S">S (-20 to 50%)</option>
+                        <option value="W">W (-0 to 200%)</option>
+                        <option value="X">X (-20 to 40%)</option>
+                        <option value="Z">Z (-20 to 80%)</option>
+          </select>
+        </div>
+      </div>
+      <div class="result">
+        <p>Min Value: <span id="capacitorMinValue"></span></p>
+        <p>Max Value: <span id="capacitorMaxValue"></span></p>
+      </div>
+      <label class="precision-label">Decimal Places: <span id="capacitorDecimalValue">2</span></label>
+      <input type="range" class="form-range" min="0" max="6" value="2" id="capacitorPrecision" />
+    </div>
+  </div>
+
+  <script>
+    function toggleDarkMode() {
+      document.body.classList.toggle("dark-mode");
+    }
+  </script>
+  <script src="script.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
